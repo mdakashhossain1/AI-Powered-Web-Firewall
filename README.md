@@ -128,26 +128,6 @@ The screenshots demonstrate several key aspects of the AI Firewall system:
 
 These visual elements work together to create an intuitive yet powerful security solution that can be easily managed by administrators while providing a seamless experience for legitimate users.
 
-### Development Team
-
-The AI-Powered Web Firewall project was developed by a dedicated team of security and machine learning experts:
-
-#### Team Members
-
-![Anisa Lay](image/anisa_lay.jpeg)
-**Anisa Lay** - *Lead Security Architect*
-Specialized in cybersecurity frameworks and AI-driven threat detection systems.
-
-![Basun](image/basun.jpeg)
-**Basun** - *Machine Learning Engineer*
-Expert in developing and optimizing machine learning models for real-time security applications.
-
-![Tama](image/tama.jpeg)
-**Tama** - *Full-Stack Developer*
-Responsible for system integration, user interface design, and deployment architecture.
-
-The team combines expertise in cybersecurity, machine learning, and software development to create a comprehensive security solution that addresses modern web threats through innovative AI-powered approaches.
-
 ## System Architecture
 
 The AI Firewall system consists of several key components that work together to provide robust protection against web-based attacks:
@@ -516,9 +496,7 @@ ai_firewall/
 │   │   ├── Screenshot (824).png  # Traffic analysis
 │   │   ├── Screenshot (825).png  # Threat intelligence
 │   │   └── Screenshot (826).png  # Security logs
-│   ├── anisa_lay.jpeg       # Team member photo
-│   ├── basun.jpeg           # Team member photo
-│   └── tama.jpeg            # Team member photo
+
 ├── hacker_portal/           # Attack simulation environment
 ├── dataset/                 # Training datasets
 ├── model/                   # ML model files
@@ -532,13 +510,11 @@ The project includes comprehensive visual documentation through organized image 
 **Screenshot Organization**:
 - **AI Web Interface**: 8 screenshots showing the complete user journey from initial access through verification
 - **Hacker Portal**: 7 screenshots demonstrating attack simulation and detection capabilities
-- **Team Photos**: Professional photos of the development team members
 
 **Image Usage Guidelines**:
 - All screenshots are in PNG format for optimal quality and transparency support
 - Images are organized in descriptive folders for easy maintenance
 - File naming follows a sequential pattern for chronological user flow documentation
-- Team photos are in JPEG format optimized for web display
 
 **Visual Documentation Benefits**:
 - Provides immediate understanding of system capabilities
@@ -709,11 +685,6 @@ The documentation includes comprehensive visual materials located in the `image/
 2. Screenshots are numbered sequentially (820-826) showing attack simulation capabilities
 3. Images demonstrate the system's response to various attack scenarios
 
-**Team Member Photos:**
-- Located directly in the `image/` folder
-- Professional photos of the development team
-- Used for project attribution and team recognition
-
 ### Image Integration
 
 The images are integrated into this documentation using relative paths, making them accessible when viewing the documentation in any markdown-compatible viewer that supports local file references. For web deployment, ensure the image paths are properly configured for your hosting environment.
@@ -722,7 +693,7 @@ The images are integrated into this documentation using relative paths, making t
 
 The AI-Powered Web Firewall represents a significant advancement in web application security by leveraging machine learning to detect and block malicious traffic in real-time. By analyzing 41 different features extracted from each web request, the system can identify complex attack patterns that traditional rule-based firewalls might miss.
 
-The comprehensive visual documentation, including interface screenshots and team member profiles, provides stakeholders with a clear understanding of both the technical capabilities and the human expertise behind this innovative security solution.
+The comprehensive visual documentation, including detailed interface screenshots, provides stakeholders with a clear understanding of the technical capabilities and functionality of this innovative security solution.
 
 The Random Forest classifier, trained on the NSL-KDD dataset, provides high accuracy in distinguishing between legitimate users and potential threats. The confidence threshold approach minimizes false positives while maintaining robust protection against clearly malicious traffic.
 
