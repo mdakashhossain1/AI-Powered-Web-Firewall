@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Firewall - Face Recognition Training</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom styles */
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #1cc88a;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --dark-color: #5a5c69;
+            --light-color: #f8f9fc;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
+            color: white;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-brand {
+            padding: 1.5rem 1rem;
+            font-size: 1.2rem;
+            font-weight: 800;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.05rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-nav {
+            padding-top: 1rem;
+        }
+
+        .sidebar-nav .nav-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.8rem 1.5rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            border-radius: 0;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 0.5rem;
+            width: 1.25rem;
+            text-align: center;
+        }
+
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 1.5rem;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--dark-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .sidebar-collapsed .sidebar {
+            width: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-collapsed .main-content {
+            margin-left: 0;
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            padding: 0.75rem 1.25rem;
+        }
+
+        .navbar-brand {
+            display: none;
+        }
+
+        .card {
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.15rem 1.75rem rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #e3e6f0;
+            padding: 1rem 1.25rem;
+            font-weight: 700;
+        }
+
+        .webcam-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+        }
+
+        #webcam {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .capture-btn {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .captured-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .captured-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 0.25rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+
+        .spinner-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 100px;
+            }
+            .sidebar-brand {
+                padding: 1rem 0.5rem;
+                font-size: 0.9rem;
+            }
+            .sidebar-nav .nav-link span {
+                display: none;
+            }
+            .sidebar-nav .nav-link i {
+                margin-right: 0;
+                font-size: 1.1rem;
+            }
+            .main-content {
+                margin-left: 100px;
+            }
+            .navbar-brand {
+                display: block;
+            }
+            .sidebar-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                overflow: hidden;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .sidebar.show {
+                width: 200px;
+            }
+            .sidebar.show .sidebar-nav .nav-link span {
+                display: inline-block;
+            }
+            .sidebar.show + .main-content {
+                margin-left: 0;
+            }
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .card-header > div {
+                margin-top: 0.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .user-dropdown .dropdown-toggle div {
+                display: none;
+            }
+            .webcam-container {
+                max-width: 100%;
+            }
+            .captured-image {
+                width: 100px;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fas fa-shield-alt me-2"></i> AI Firewall
+        </div>
+        <div class="sidebar-nav">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('dashboard') }}">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('analytics') }}">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('access_logs') }}">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Access Logs</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('portfolio') }}">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Portfolio</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('documentation') }}">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Documentation</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ url_for('face_training_page') }}">
+                        <i class="fas fa-camera"></i>
+                        <span>Face Training</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('admin_face_recognition') }}">
+                        <i class="fas fa-users-cog"></i>
+                        <span>Face Recognition</span>
+                    </a>
+                </li>
+                <li class="nav-item mt-3">
+                    <a class="nav-link" href="{{ url_for('logout') }}">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light mb-4">
+            <div class="container-fluid">
+                <button class="sidebar-toggle me-2" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="#">
+                    <i class="fas fa-shield-alt me-2"></i> AI Firewall
+                </a>
+                <div class="ms-auto">
+                    <div class="dropdown user-dropdown">
+                        <a class="dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle fa-2x me-2"></i>
+                            <div>
+                                <div>{{ session.username }}</div>
+                                <small class="text-muted">Administrator</small>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('face_training_page') }}"><i class="fas fa-camera me-2"></i> Face Training</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0 text-gray-800">Face Recognition Training</h1>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-camera me-1"></i>
+                            Train Your Face Recognition Model
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                To set up face recognition, capture at least 5 images of your face from different angles. Make sure you have good lighting and your face is clearly visible.
+                            </div>
+
+                            <div id="error-message" class="alert alert-danger" style="display: none;"></div>
+                            <div id="success-message" class="alert alert-success" style="display: none;"></div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="webcam-container mb-3">
+                                        <video id="webcam" autoplay playsinline></video>
+                                        <button id="capture-btn" class="btn btn-primary capture-btn">
+                                            <i class="fas fa-camera me-1"></i> Capture
+                                        </button>
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <button id="train-btn" class="btn btn-success" disabled>
+                                            <i class="fas fa-brain me-1"></i> Train Model
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5 class="mb-3">Captured Images <span id="image-count" class="badge bg-primary">0</span></h5>
+                                    <div id="captured-images" class="captured-images">
+                                        <div class="text-center text-muted py-5">
+                                            <i class="fas fa-camera fa-3x mb-3"></i>
+                                            <p>No images captured yet. Click the capture button to take photos.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="spinner" class="spinner-container">
+        <div class="spinner-content">
+            <div class="spinner-border text-primary mb-3" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p id="spinner-text" class="mb-0">Processing...</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Sidebar toggle functionality
+            $('#sidebarToggle').on('click', function() {
+                $('body').toggleClass('sidebar-collapsed');
+                $('.sidebar').toggleClass('show');
+
+                // Ensure text is visible when sidebar is shown on mobile
+                if ($('.sidebar').hasClass('show')) {
+                    $('.sidebar-nav .nav-link span').css('display', 'inline-block');
+                } else if ($(window).width() < 992) {
+                    $('.sidebar-nav .nav-link span').css('display', 'none');
+                }
+
+                // Save state to localStorage
+                if ($('body').hasClass('sidebar-collapsed')) {
+                    localStorage.setItem('sidebar-collapsed', 'true');
+                } else {
+                    localStorage.setItem('sidebar-collapsed', 'false');
+                }
+            });
+
+            // Check for saved state on page load
+            if (localStorage.getItem('sidebar-collapsed') === 'true') {
+                $('body').addClass('sidebar-collapsed');
+                $('.sidebar').removeClass('show');
+            }
+
+            // Handle responsive behavior
+            function checkWidth() {
+                if ($(window).width() < 768) {
+                    $('body').addClass('sidebar-collapsed');
+                    $('.sidebar').removeClass('show');
+                    $('.sidebar-nav .nav-link span').css('display', 'none');
+                } else if ($(window).width() >= 768 && $(window).width() < 992) {
+                    $('body').removeClass('sidebar-collapsed');
+                    $('.sidebar').removeClass('show');
+                    $('.sidebar-nav .nav-link span').css('display', 'none');
+                } else if (localStorage.getItem('sidebar-collapsed') !== 'true' && $(window).width() >= 992) {
+                    $('body').removeClass('sidebar-collapsed');
+                    $('.sidebar-nav .nav-link span').css('display', 'inline-block');
+                }
+
+                // Always ensure text is visible when sidebar is shown
+                if ($('.sidebar').hasClass('show')) {
+                    $('.sidebar-nav .nav-link span').css('display', 'inline-block');
+                }
+            }
+
+            // Check width on page load
+            checkWidth();
+
+            // Check width on window resize
+            $(window).resize(function() {
+                checkWidth();
+            });
+
+            // Face recognition functionality
+            const video = document.getElementById('webcam');
+            const captureBtn = document.getElementById('capture-btn');
+            const trainBtn = document.getElementById('train-btn');
+            const capturedImagesContainer = document.getElementById('captured-images');
+            const imageCountElement = document.getElementById('image-count');
+            const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
+            const spinner = document.getElementById('spinner');
+            const spinnerText = document.getElementById('spinner-text');
+
+            let capturedImages = [];
+
+            // Access the webcam
+            async function startWebcam() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            width: { ideal: 640 },
+                            height: { ideal: 480 },
+                            facingMode: 'user'
+                        }
+                    });
+                    video.srcObject = stream;
+                } catch (err) {
+                    showError('Error accessing webcam: ' + err.message);
+                }
+            }
+
+            // Start the webcam when the page loads
+            startWebcam();
+
+            // Capture image when button is clicked
+            captureBtn.addEventListener('click', function() {
+                // Capture the current frame from the webcam
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                // Convert the frame to base64
+                const imageData = canvas.toDataURL('image/jpeg');
+
+                // Save the image
+                saveImage(imageData);
+            });
+
+            // Save captured image
+            async function saveImage(imageData) {
+                spinner.style.display = 'flex';
+                spinnerText.textContent = 'Saving image...';
+
+                try {
+                    const response = await fetch('{{ url_for("api_save_face_image") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            image: imageData
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Add image to the captured images container
+                        if (capturedImages.length === 0) {
+                            capturedImagesContainer.innerHTML = ''; // Clear the "No images" message
+                        }
+
+                        capturedImages.push(imageData);
+
+                        const img = document.createElement('img');
+                        img.src = imageData;
+                        img.className = 'captured-image';
+                        capturedImagesContainer.appendChild(img);
+
+                        // Update image count
+                        imageCountElement.textContent = capturedImages.length;
+
+                        // Enable train button if enough images are captured
+                        if (capturedImages.length >= 5) {
+                            trainBtn.disabled = false;
+                        }
+
+                        showSuccess('Image captured successfully');
+                    } else {
+                        showError(result.message);
+                    }
+                } catch (err) {
+                    showError('Error saving image: ' + err.message);
+                } finally {
+                    spinner.style.display = 'none';
+                }
+            }
+
+            // Train model when button is clicked
+            trainBtn.addEventListener('click', async function() {
+                spinner.style.display = 'flex';
+                spinnerText.textContent = 'Training face recognition model...';
+
+                try {
+                    const response = await fetch('{{ url_for("api_train_face_model") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showSuccess('Face recognition model trained successfully! You can now use face recognition to log in.');
+                    } else {
+                        showError(result.message);
+                    }
+                } catch (err) {
+                    showError('Error training model: ' + err.message);
+                } finally {
+                    spinner.style.display = 'none';
+                }
+            });
+
+            // Show error message
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+
+                // Hide after 5 seconds
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                }, 5000);
+            }
+
+            // Show success message
+            function showSuccess(message) {
+                successMessage.textContent = message;
+                successMessage.style.display = 'block';
+                errorMessage.style.display = 'none';
+
+                // Hide after 5 seconds
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>

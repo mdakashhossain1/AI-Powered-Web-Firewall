@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Firewall - Student Project</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom styles */
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #1cc88a;
+            --dark-color: #5a5c69;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            color: #444;
+        }
+
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
+        }
+
+        .hero-section {
+            padding: 7rem 0;
+            color: white;
+        }
+
+        .section-padding {
+            padding: 5rem 0;
+        }
+
+        .team-member img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid rgba(78, 115, 223, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .tech-icon {
+            font-size: 3.5rem;
+            margin: 1rem;
+            color: var(--dark-color);
+        }
+
+        .footer {
+            background-color: #f8f9fc;
+            padding: 2rem 0;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">AI Firewall</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#team">Team</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tech">Technologies</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="home" class="hero-section bg-gradient-primary text-white text-center">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-4">AI-Powered Web Firewall</h1>
+                    <p class="lead mb-5">An intelligent security solution that uses machine learning to detect and block malicious web traffic in real-time.</p>
+                    <a href="#about" class="btn btn-light btn-lg px-5 py-3 fw-bold">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="section-padding">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-8 text-center">
+                    <h2 class="fw-bold mb-4">About Our Project</h2>
+                    <p class="lead">This project was developed to created an AI-powered firewall that uses machine learning algorithms to identify and block potentially malicious web traffic.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card h-100 p-4">
+                        <h3 class="h4 mb-3">Project Overview</h3>
+                        <p>Our AI Firewall analyzes incoming web requests using a trained machine learning model to distinguish between legitimate users and potential threats. The system evaluates multiple features from each request and makes real-time decisions to protect web applications from various attacks.</p>
+                        <p>The project demonstrates the practical application of machine learning in cybersecurity and showcases how AI can enhance traditional security measures.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 p-4">
+                        <h3 class="h4 mb-3">Our Approach</h3>
+                        <p>We trained our model using the NSL-KDD dataset, which contains thousands of network traffic samples labeled as either normal or attack traffic. Our Random Forest classifier achieved high accuracy in identifying malicious requests.</p>
+                        <p>The web application is built with Flask and features a user-friendly interface that provides real-time feedback. We've implemented a verification system that helps distinguish between human users and automated attacks.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="section-padding bg-light">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col-12">
+                    <h2 class="fw-bold">Our Team</h2>
+                    <p class="lead">Meet the talented students behind this project</p>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card text-center p-4 h-100">
+                        <div class="team-member">
+                            <img src="https://mission-rewards-app.testproyyyy.workers.dev/download.aspx?file=kBAu1eHD2CawucDOk5sZ08yvXDdzkksJ5EEyS7ZhDWTZfTWqyq3WDxK5poUYL3b3&expiry=DXw2OCF5sirhJkUSgtowhg%3D%3D&mac=73cdc8ab661efa3fb40cbf57d1af284b7b637a4bb24ce3c12a8b90c810b4634a" alt="Team Member 1" class="mb-3">
+                            <h3 class="h4">Anisha Roy</h3>
+                            <p class="text-muted">Computer Science Engineer</p>
+                            <p>Specialized in model training and feature engineering. Responsible for developing and optimizing the AI algorithms used in the firewall.</p>
+                            <div class="social-icons mt-3">
+                                <a href="#" class="text-dark me-2"><i class="fab fa-github"></i></a>
+                                <a href="#" class="text-dark me-2"><i class="fab fa-linkedin"></i></a>
+                                <a href="#" class="text-dark"><i class="fas fa-envelope"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card text-center p-4 h-100">
+                        <div class="team-member">
+                            <img src="https://mission-rewards-app.testproyyyy.workers.dev/download.aspx?file=dj75kJh91X27xoX%2BfduESEcbDaJzsP4Y3BIDasnZKBADZKVOpFG%2FDsNUN5Q6KC8J&expiry=bZq66KLLaHfYKnVbhCbrQg%3D%3D&mac=25b14272a8f71b23b88e2626842ff195af4b9b8b4ef45c5ffe3f76a287c31568" alt="Team Member 2" class="mb-3">
+                            <h3 class="h4">Sasundhara Dhar</h3>
+                            <p class="text-muted">Computer Science Engineer</p>
+                            <p>Focused on server-side logic and API development. Implemented the Flask application and integrated the ML model with the web interface.</p>
+                            <div class="social-icons mt-3">
+                                <a href="#" class="text-dark me-2"><i class="fab fa-github"></i></a>
+                                <a href="#" class="text-dark me-2"><i class="fab fa-linkedin"></i></a>
+                                <a href="#" class="text-dark"><i class="fas fa-envelope"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card text-center p-4 h-100">
+                        <div class="team-member">
+                            <img src="https://mission-rewards-app.testproyyyy.workers.dev/download.aspx?file=YJvyPGCSTjs%2B6AMzFDXR8USIZFsa4DW0TJD2%2FgQrkmKKbqkYxJehxt6dGADVXJ2F&expiry=RpKY5i4WWeh7qMidAMD9ew%3D%3D&mac=6c91c9ecbadb8d99ec83327b30568e184c4d06246e2913d8d30f7ba3c3e5ba4a" alt="Team Member 3" class="mb-3">
+                            <h3 class="h4">Tamalika Bhattacharajee</h3>
+                            <p class="text-muted">Computer Science Engineer</p>
+                            <p>Designed and implemented the user interface. Created responsive layouts and interactive elements to enhance user experience.</p>
+                            <div class="social-icons mt-3">
+                                <a href="#" class="text-dark me-2"><i class="fab fa-github"></i></a>
+                                <a href="#" class="text-dark me-2"><i class="fab fa-linkedin"></i></a>
+                                <a href="#" class="text-dark"><i class="fas fa-envelope"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card text-center p-4 h-100">
+                        <div class="team-member">
+                            <img src="https://mission-rewards-app.testproyyyy.workers.dev/download.aspx?file=7W3TPwpDINgUOYaXT%2FY8GoSwjz4VdU7oHIwL2E7ns3Eav9FnOMnnSCA%2FREcqFfLC&expiry=9qPwloFOZX4h%2B1F5KqpMAw%3D%3D&mac=6fc74d3adcf009aaf0456d7ded3b4c24ae5dc8b3d20caf2bf72f252b4cbb4607" alt="Team Member 1" class="mb-3">
+                            <h3 class="h4">Sergius Chakma</h3>
+                            <p class="text-muted">Computer Science Engineer</p>
+                            <p>Specialized in model training and feature engineering. Responsible for developing and optimizing the AI algorithms used in the firewall.</p>
+                            <div class="social-icons mt-3">
+                                <a href="#" class="text-dark me-2"><i class="fab fa-github"></i></a>
+                                <a href="#" class="text-dark me-2"><i class="fab fa-linkedin"></i></a>
+                                <a href="#" class="text-dark"><i class="fas fa-envelope"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card text-center p-4 h-100">
+                        <div class="team-member">
+                            <img src="https://mission-rewards-app.testproyyyy.workers.dev/download.aspx?file=Fnh6koAWfmSAnOe8foX6dV7UMUi%2FE8WZquWZFehZFT1K802UVwFLv1kBLiA%2BgaQf&expiry=ZSITdkTu3fV4HgBPpg41Og%3D%3D&mac=49d3d11f02e67cdb67efbf992a7b61a43ce071be1dfb341a72cf6383532d05ee" alt="Team Member 2" class="mb-3">
+                            <h3 class="h4">Rajdeeep Sutradhar</h3>
+                            <p class="text-muted">Computer Science Engineer</p>
+                            <p>Focused on server-side logic and API development. Implemented the Flask application and integrated the ML model with the web interface.</p>
+                            <div class="social-icons mt-3">
+                                <a href="#" class="text-dark me-2"><i class="fab fa-github"></i></a>
+                                <a href="#" class="text-dark me-2"><i class="fab fa-linkedin"></i></a>
+                                <a href="#" class="text-dark"><i class="fas fa-envelope"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section-padding">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col-12">
+                    <h2 class="fw-bold">Key Features</h2>
+                    <p class="lead">What makes our AI Firewall special</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 p-4 text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="h4">Real-time Protection</h3>
+                        <p>Our firewall analyzes incoming requests in real-time, providing immediate protection against potential threats without causing noticeable delays.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 p-4 text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3 class="h4">Machine Learning</h3>
+                        <p>Leverages advanced machine learning algorithms to detect patterns and anomalies that traditional rule-based firewalls might miss.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 p-4 text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="h4">High Accuracy</h3>
+                        <p>Our model achieves over 95% accuracy in distinguishing between legitimate users and potential threats, minimizing false positives.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 p-4 text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <h3 class="h4">User Verification</h3>
+                        <p>Implements a sophisticated user verification system to distinguish between human users and automated attacks.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 p-4 text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <h3 class="h4">Lightweight</h3>
+                        <p>Designed to be resource-efficient, allowing it to run on various hosting environments without significant performance impact.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 p-4 text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h3 class="h4">Customizable</h3>
+                        <p>Easily adaptable to different web applications and security requirements with configurable sensitivity levels.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technologies Section -->
+    <section id="tech" class="section-padding bg-light">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col-12">
+                    <h2 class="fw-bold">Technologies Used</h2>
+                    <p class="lead">The tools and frameworks behind our project</p>
+                </div>
+            </div>
+            <div class="row justify-content-center text-center">
+                <div class="col-md-2 col-4 mb-4">
+                    <div class="tech-icon">
+                        <i class="fab fa-python"></i>
+                    </div>
+                    <h5>Python</h5>
+                </div>
+                <div class="col-md-2 col-4 mb-4">
+                    <div class="tech-icon">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <h5>Flask</h5>
+                </div>
+                <div class="col-md-2 col-4 mb-4">
+                    <div class="tech-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h5>Scikit-learn</h5>
+                </div>
+                <div class="col-md-2 col-4 mb-4">
+                    <div class="tech-icon">
+                        <i class="fab fa-bootstrap"></i>
+                    </div>
+                    <h5>Bootstrap</h5>
+                </div>
+                <div class="col-md-2 col-4 mb-4">
+                    <div class="tech-icon">
+                        <i class="fab fa-js"></i>
+                    </div>
+                    <h5>JavaScript</h5>
+                </div>
+                <div class="col-md-2 col-4 mb-4">
+                    <div class="tech-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h5>Pandas</h5>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card p-4">
+                        <h3 class="h4 mb-3">Technical Implementation</h3>
+                        <p>Our project uses a Random Forest classifier trained on the NSL-KDD dataset to identify potential threats. The model analyzes 41 different features extracted from each web request to make its prediction.</p>
+                        <p>The web application is built with Flask, a lightweight Python web framework, and uses Bootstrap for responsive design. We've implemented client-side verification using JavaScript to enhance the user experience and provide an additional layer of security.</p>
+                        <p>The entire codebase follows best practices for security and performance, with modular architecture that allows for easy maintenance and future enhancements.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section-padding">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col-12">
+                    <h2 class="fw-bold">Contact Us</h2>
+                    <p class="lead">Have questions about our project? Get in touch!</p>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card p-4">
+                        <form>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="name" placeholder="Your Name">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" placeholder="Your Email">
+                                </div>
+                                <div class="col-12">
+                                    <label for="subject" class="form-label">Subject</label>
+                                    <input type="text" class="form-control" id="subject" placeholder="Subject">
+                                </div>
+                                <div class="col-12">
+                                    <label for="message" class="form-label">Message</label>
+                                    <textarea class="form-control" id="message" rows="5" placeholder="Your Message"></textarea>
+                                </div>
+                                <div class="col-12 text-center mt-4">
+                                    <button type="submit" class="btn btn-primary btn-lg px-5">Send Message</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-5 text-center">
+                <div class="col-md-4 mb-4">
+                    <div class="card p-4 h-100">
+                        <i class="fas fa-envelope feature-icon"></i>
+                        <h4>Email</h4>
+                        <p>rajdeepsutradhar.cse.2025.tcea@gmail.coms</p>
+                        <p>basundharadhar.cse.2025.tcea@gmail.com</p>
+                        <p>tamalika.cse.2025.tcea@gmail.com</p>
+                        <p>anisharoycst@gmail.com</p>
+                        <p>sergiuschakm@gmail.com</p>
+
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card p-4 h-100">
+                        <i class="fas fa-map-marker-alt feature-icon"></i>
+                        <h4>Location</h4>
+                        <p>Techno Collage of engineering Agartala<br>Q8H3+39W Tripura (W, Maheshkhola, Agartala, Madhuban, Tripura 799004</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card p-4 h-100">
+                        <i class="fas fa-code-branch feature-icon"></i>
+                        <h4>GitHub</h4>
+                        <p>github.com/sce-team/ai-firewall</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <p class="lead mb-0">AI Firewall Project</p>
+                    <p class="text-muted">A final year project by CSE students</p>
+                    <hr>
+                    <div class="mb-3">
+                        <a href="#" class="text-dark mx-2"><i class="fab fa-github fa-lg"></i></a>
+                        <a href="#" class="text-dark mx-2"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="#" class="text-dark mx-2"><i class="fab fa-twitter fa-lg"></i></a>
+                    </div>
+                    <p class="text-muted small mb-0">© 2025 AI Firewall Team. All Rights Reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS for smooth scrolling -->
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 70,
+                        behavior: 'smooth'
+                    });
+
+                    // Close mobile menu if open
+                    const navbarCollapse = document.querySelector('.navbar-collapse');
+                    if (navbarCollapse.classList.contains('show')) {
+                        navbarCollapse.classList.remove('show');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

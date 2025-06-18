@@ -1,0 +1,10 @@
+scikit-learn
+pandas
+flask
+joblib
+requests
+reportlab
+pdfkit
+opencv-python
+pillow
+numpy

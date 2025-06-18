@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-dark text-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-shield-alt me-2"></i>Ethical Hacking Portal
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home me-1"></i>Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><i class="fas fa-chart-bar me-1"></i>Results</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card bg-black text-light mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h4><i class="fas fa-chart-line me-2"></i>Simulation Results</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Simulation Details</h5>
+                                <table class="table table-dark table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <th>Target URL:</th>
+                                            <td id="result-target-url">{{ simulation.target_url }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Attack Type:</th>
+                                            <td id="result-attack-type">{{ simulation.attack_type }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Duration:</th>
+                                            <td id="result-duration">{{ simulation.duration }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Status:</th>
+                                            <td>
+                                                <span id="result-status" class="badge bg-{{ 'success' if simulation.status == 'completed' else 'danger' }}">
+                                                    {{ simulation.status }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Statistics</h5>
+                                <div class="row text-center">
+                                    <div class="col-6 mb-4">
+                                        <div class="card bg-primary text-white">
+                                            <div class="card-body">
+                                                <h3 id="result-requests-sent">{{ simulation.requests_sent }}</h3>
+                                                <p class="mb-0">Requests Sent</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 mb-4">
+                                        <div class="card bg-danger text-white">
+                                            <div class="card-body">
+                                                <h3 id="result-requests-blocked">{{ simulation.requests_blocked }}</h3>
+                                                <p class="mb-0">Requests Blocked</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="card bg-info text-white">
+                                            <div class="card-body">
+                                                <h3 id="result-block-rate">{{ (simulation.requests_blocked / simulation.requests_sent * 100)|round|int if simulation.requests_sent > 0 else 0 }}%</h3>
+                                                <p class="mb-0">Block Rate</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5>Block Rate Over Time</h5>
+                                <canvas id="block-rate-chart" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bg-black text-light mb-4">
+                    <div class="card-header bg-secondary text-white">
+                        <h5><i class="fas fa-list me-2"></i>Request Log</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>URL</th>
+                                        <th>Method</th>
+                                        <th>Status</th>
+                                        <th>Result</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="request-log-table">
+                                    {% for log in simulation.logs %}
+                                    <tr>
+                                        <td>{{ log.timestamp }}</td>
+                                        <td>{{ log.url }}</td>
+                                        <td>{{ log.method }}</td>
+                                        <td>{{ log.status_code if log.status_code is defined else 'N/A' }}</td>
+                                        <td>
+                                            {% if log.blocked %}
+                                            <span class="badge bg-danger">Blocked</span>
+                                            {% elif log.error is defined %}
+                                            <span class="badge bg-warning text-dark">Error: {{ log.error }}</span>
+                                            {% else %}
+                                            <span class="badge bg-success">Allowed</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bg-black text-light">
+                    <div class="card-header bg-warning text-dark">
+                        <h5><i class="fas fa-lightbulb me-2"></i>Analysis</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>Firewall Effectiveness</h6>
+                        <p id="effectiveness-analysis">
+                            {% if simulation.requests_blocked / simulation.requests_sent > 0.8 %}
+                            The firewall was highly effective at blocking this attack, with a block rate of {{ (simulation.requests_blocked / simulation.requests_sent * 100)|round|int }}%.
+                            {% elif simulation.requests_blocked / simulation.requests_sent > 0.5 %}
+                            The firewall was moderately effective at blocking this attack, with a block rate of {{ (simulation.requests_blocked / simulation.requests_sent * 100)|round|int }}%.
+                            {% else %}
+                            The firewall was not very effective at blocking this attack, with a block rate of only {{ (simulation.requests_blocked / simulation.requests_sent * 100)|round|int }}%.
+                            {% endif %}
+                        </p>
+                        
+                        <h6>Attack Pattern</h6>
+                        <p id="pattern-analysis">
+                            The {{ simulation.attack_type }} attack pattern is characterized by 
+                            {% if simulation.attack_type == 'neptune' %}
+                            a high volume of SYN packets without completing the TCP handshake.
+                            {% elif simulation.attack_type == 'smurf' %}
+                            ICMP echo request packets with a spoofed source address.
+                            {% elif simulation.attack_type == 'portsweep' %}
+                            scanning multiple ports on the target system.
+                            {% elif simulation.attack_type == 'normal' %}
+                            regular, non-malicious traffic patterns.
+                            {% else %}
+                            specific traffic patterns that can be detected by the AI firewall.
+                            {% endif %}
+                        </p>
+                        
+                        <h6>Recommendations</h6>
+                        <ul id="recommendations">
+                            {% if simulation.requests_blocked / simulation.requests_sent < 0.8 %}
+                            <li>Consider updating the firewall rules to better detect {{ simulation.attack_type }} attacks.</li>
+                            <li>Analyze the allowed requests to identify patterns that could be used for better detection.</li>
+                            {% endif %}
+                            <li>Regular testing with different attack patterns is recommended to ensure comprehensive protection.</li>
+                            <li>Monitor system resources during attacks to ensure the firewall can handle high traffic volumes.</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 mt-4">
+                    <a href="/" class="btn btn-primary">
+                        <i class="fas fa-home me-2"></i>Return to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="bg-black text-light mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Ethical Hacking Portal</h5>
+                    <p>A tool for testing website security against various attack patterns.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p><strong>Disclaimer:</strong> Use this tool responsibly and legally.</p>
+                    <p class="mb-0">&copy; 2023 AI Firewall Project</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Initialize block rate chart
+        const ctx = document.getElementById('block-rate-chart').getContext('2d');
+        const blockRateChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ simulation.chart_labels|safe if simulation.chart_labels is defined else '[]' }},
+                datasets: [{
+                    label: 'Block Rate (%)',
+                    data: {{ simulation.chart_data|safe if simulation.chart_data is defined else '[]' }},
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 2,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

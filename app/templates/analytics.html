@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - AI Firewall</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #1cc88a;
+            --dark-color: #5a5c69;
+            --light-color: #f8f9fc;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--light-color);
+        }
+
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
+            color: white;
+            position: fixed;
+            width: 250px;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-brand {
+            padding: 1.5rem 1rem;
+            font-size: 1.2rem;
+            font-weight: 800;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.05rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-nav {
+            padding-top: 1rem;
+        }
+
+        .sidebar-nav .nav-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 1rem;
+            font-weight: 600;
+            border-radius: 0;
+        }
+
+        .sidebar-nav .nav-link:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-nav .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-nav .nav-link i {
+            margin-right: 0.5rem;
+            width: 1.25rem;
+            text-align: center;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 1.5rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--dark-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .sidebar-collapsed .sidebar {
+            width: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-collapsed .main-content {
+            margin-left: 0;
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            padding: 0.75rem 1.25rem;
+        }
+
+        .navbar-brand {
+            display: none;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #e3e6f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+        }
+
+        .user-dropdown .dropdown-toggle {
+            text-decoration: none;
+            color: var(--dark-color);
+        }
+
+        .user-dropdown .dropdown-toggle::after {
+            display: none;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .stat-card {
+            border-left: 4px solid;
+            border-radius: 0.25rem;
+        }
+
+        .stat-card-primary {
+            border-left-color: var(--primary-color);
+        }
+
+        .stat-card-success {
+            border-left-color: var(--secondary-color);
+        }
+
+        .stat-card-warning {
+            border-left-color: #f6c23e;
+        }
+
+        .stat-card-danger {
+            border-left-color: #e74a3b;
+        }
+
+        .stat-card-icon {
+            font-size: 2rem;
+            opacity: 0.3;
+        }
+
+        .stat-card-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--dark-color);
+        }
+
+        .stat-card-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 100px;
+            }
+            .sidebar-brand {
+                padding: 1rem 0.5rem;
+                font-size: 0.9rem;
+            }
+            .sidebar-nav .nav-link span {
+                display: none;
+            }
+            .sidebar-nav .nav-link i {
+                margin-right: 0;
+                font-size: 1.1rem;
+            }
+            .main-content {
+                margin-left: 100px;
+            }
+            .navbar-brand {
+                display: block;
+            }
+            .sidebar-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                overflow: hidden;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .sidebar.show {
+                width: 200px;
+            }
+            .sidebar.show .sidebar-nav .nav-link span {
+                display: inline-block;
+            }
+            .sidebar.show + .main-content {
+                margin-left: 0;
+            }
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .card-header > div {
+                margin-top: 0.5rem;
+            }
+            .chart-container {
+                height: 250px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stat-card-value {
+                font-size: 1.25rem;
+            }
+            .stat-card-icon {
+                font-size: 1.5rem;
+            }
+            .user-dropdown .dropdown-toggle div {
+                display: none;
+            }
+            .chart-container {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fas fa-shield-alt me-2"></i> AI Firewall
+        </div>
+        <div class="sidebar-nav">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('dashboard') }}">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ url_for('analytics') }}">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('access_logs') }}">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Access Logs</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('portfolio') }}">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Portfolio</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('documentation') }}">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Documentation</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('face_training_page') }}">
+                        <i class="fas fa-camera"></i>
+                        <span>Face Training</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('admin_face_recognition') }}">
+                        <i class="fas fa-users-cog"></i>
+                        <span>Face Recognition</span>
+                    </a>
+                </li>
+                <li class="nav-item mt-3">
+                    <a class="nav-link" href="{{ url_for('logout') }}">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light mb-4">
+            <div class="container-fluid">
+                <button class="sidebar-toggle me-2" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="#">
+                    <i class="fas fa-shield-alt me-2"></i> AI Firewall
+                </a>
+                <div class="ms-auto">
+                    <div class="dropdown user-dropdown">
+                        <a class="dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle fa-2x me-2"></i>
+                            <div>
+                                <div>{{ session.username }}</div>
+                                <small class="text-muted">Administrator</small>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <div class="container-fluid">
+            <!-- Page Heading -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800">Analytics Dashboard</h1>
+                <div>
+                    <a href="#" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
+                        <i class="fas fa-download fa-sm text-white-50 me-1"></i> Export Report
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card stat-card-primary h-100 py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="stat-card-title mb-1">Total Access Attempts</div>
+                                    <div class="stat-card-value">{{ stats.total_attempts }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-globe stat-card-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card stat-card-success h-100 py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="stat-card-title mb-1">Unique IP Addresses</div>
+                                    <div class="stat-card-value">{{ stats.unique_ips }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-network-wired stat-card-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card stat-card-warning h-100 py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="stat-card-title mb-1">Recent Activity (24h)</div>
+                                    <div class="stat-card-value">{{ stats.recent_activity }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-clock stat-card-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card stat-card-danger h-100 py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="stat-card-title mb-1">Blocked Attempts</div>
+                                    <div class="stat-card-value">{{ stats.blocked_attempts }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-ban stat-card-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row">
+                <!-- Traffic Overview Chart -->
+                <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Traffic Overview</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="trafficChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Traffic Status Chart -->
+                <div class="col-lg-4">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Traffic Status</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="statusChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location Map and Top Countries -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Geographic Distribution</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="locationChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Top Countries</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="countriesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Sidebar toggle functionality
+            $('#sidebarToggle').on('click', function() {
+                $('body').toggleClass('sidebar-collapsed');
+                $('.sidebar').toggleClass('show');
+
+                // Ensure text is visible when sidebar is shown on mobile
+                if ($('.sidebar').hasClass('show')) {
+                    $('.sidebar-nav .nav-link span').css('display', 'inline-block');
+                } else if ($(window).width() < 992) {
+                    $('.sidebar-nav .nav-link span').css('display', 'none');
+                }
+
+                // Save state to localStorage
+                if ($('body').hasClass('sidebar-collapsed')) {
+                    localStorage.setItem('sidebar-collapsed', 'true');
+                } else {
+                    localStorage.setItem('sidebar-collapsed', 'false');
+                }
+            });
+
+            // Check for saved state on page load
+            if (localStorage.getItem('sidebar-collapsed') === 'true') {
+                $('body').addClass('sidebar-collapsed');
+                $('.sidebar').removeClass('show');
+            }
+
+            // Handle responsive behavior
+            function checkWidth() {
+                if ($(window).width() < 768) {
+                    $('body').addClass('sidebar-collapsed');
+                    $('.sidebar').removeClass('show');
+                    $('.sidebar-nav .nav-link span').css('display', 'none');
+                } else if ($(window).width() >= 768 && $(window).width() < 992) {
+                    $('body').removeClass('sidebar-collapsed');
+                    $('.sidebar').removeClass('show');
+                    $('.sidebar-nav .nav-link span').css('display', 'none');
+                } else if (localStorage.getItem('sidebar-collapsed') !== 'true' && $(window).width() >= 992) {
+                    $('body').removeClass('sidebar-collapsed');
+                    $('.sidebar-nav .nav-link span').css('display', 'inline-block');
+                }
+
+                // Always ensure text is visible when sidebar is shown
+                if ($('.sidebar').hasClass('show')) {
+                    $('.sidebar-nav .nav-link span').css('display', 'inline-block');
+                }
+            }
+
+            // Check width on page load
+            checkWidth();
+
+            // Check width on window resize
+            $(window).resize(function() {
+                checkWidth();
+            });
+        });
+
+        // Real data from database for charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Traffic Overview Chart
+            var trafficCtx = document.getElementById('trafficChart').getContext('2d');
+            var trafficChart = new Chart(trafficCtx, {
+                type: 'line',
+                data: {
+                    labels: [
+                        {% for hour in hourly_data.hours %}
+                            '{{ hour }}:00'{% if not loop.last %},{% endif %}
+                        {% endfor %}
+                    ],
+                    datasets: [{
+                        label: 'Total Traffic',
+                        data: [
+                            {% for count in hourly_data.counts %}
+                                {{ count }}{% if not loop.last %},{% endif %}
+                            {% endfor %}
+                        ],
+                        backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                        borderColor: 'rgba(78, 115, 223, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+                        pointBorderColor: '#fff',
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    return tooltipItems[0].label + ' hours';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Access Attempts'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Hour of Day'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Traffic Status Chart
+            var statusCtx = document.getElementById('statusChart').getContext('2d');
+            var statusChart = new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Allowed', 'Blocked'],
+                    datasets: [{
+                        data: [{{ status_data.allowed }}, {{ status_data.blocked }}],
+                        backgroundColor: ['#1cc88a', '#e74a3b'],
+                        hoverBackgroundColor: ['#17a673', '#d52a1a'],
+                        hoverBorderColor: "rgba(234, 236, 244, 1)",
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    var label = context.label || '';
+                                    var value = context.raw || 0;
+                                    var total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    var percentage = Math.round((value / total) * 100);
+                                    return label + ': ' + value + ' (' + percentage + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Location Chart (Bar chart for geographic distribution)
+            var locationCtx = document.getElementById('locationChart').getContext('2d');
+            var locationChart = new Chart(locationCtx, {
+                type: 'bar',
+                data: {
+                    labels: [
+                        {% for region in geo_data.regions %}
+                            '{{ region }}'{% if not loop.last %},{% endif %}
+                        {% endfor %}
+                    ],
+                    datasets: [{
+                        label: 'Access Attempts by Region',
+                        data: [
+                            {% for count in geo_data.counts %}
+                                {{ count }}{% if not loop.last %},{% endif %}
+                            {% endfor %}
+                        ],
+                        backgroundColor: 'rgba(78, 115, 223, 0.8)',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Access Attempts'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Region'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Top Countries Chart
+            var countriesCtx = document.getElementById('countriesChart').getContext('2d');
+            var countriesChart = new Chart(countriesCtx, {
+                type: 'pie',
+                data: {
+                    labels: [
+                        {% for country in country_data.countries %}
+                            '{{ country }}'{% if not loop.last %},{% endif %}
+                        {% endfor %}
+                    ],
+                    datasets: [{
+                        data: [
+                            {% for count in country_data.counts %}
+                                {{ count }}{% if not loop.last %},{% endif %}
+                            {% endfor %}
+                        ],
+                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796'],
+                        hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#dda20a', '#d52a1a', '#6e707e'],
+                        hoverBorderColor: "rgba(234, 236, 244, 1)",
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    var label = context.label || '';
+                                    var value = context.raw || 0;
+                                    var total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    var percentage = Math.round((value / total) * 100);
+                                    return label + ': ' + value + ' (' + percentage + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

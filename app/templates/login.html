@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Firewall - Admin Login</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom styles */
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #1cc88a;
+            --dark-color: #5a5c69;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            color: #444;
+            background-color: #f8f9fc;
+        }
+
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
+        }
+
+        .login-container {
+            margin-top: 100px;
+        }
+
+        .card-login {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #3a5fc8;
+            border-color: #3a5fc8;
+        }
+
+        .login-sidebar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
+            color: white;
+            padding: 3rem;
+        }
+
+        .login-form {
+            padding: 3rem;
+        }
+
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container login-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card card-login">
+                    <div class="row g-0">
+                        <div class="col-lg-5 d-none d-lg-block login-sidebar">
+                            <div class="h-100 d-flex flex-column justify-content-center">
+                                <h2 class="fw-bold mb-4">AI Firewall Admin</h2>
+                                <p class="mb-5">Access the admin dashboard to monitor and manage your AI-powered web firewall system.</p>
+                                <div class="d-flex align-items-center mb-4">
+                                    <i class="fas fa-shield-alt me-3 fa-2x"></i>
+                                    <div>
+                                        <h5 class="mb-0">Real-time Protection</h5>
+                                        <small>Monitor threats as they happen</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center mb-4">
+                                    <i class="fas fa-chart-line me-3 fa-2x"></i>
+                                    <div>
+                                        <h5 class="mb-0">Access Analytics</h5>
+                                        <small>Track visitor patterns and threats</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-cogs me-3 fa-2x"></i>
+                                    <div>
+                                        <h5 class="mb-0">System Management</h5>
+                                        <small>Configure firewall settings</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="login-form">
+                                <h3 class="fw-bold mb-4 text-center">Admin Login</h3>
+
+                                {% if error %}
+                                <div class="alert-error">{{ error }}</div>
+                                {% endif %}
+
+                                {% with messages = get_flashed_messages() %}
+                                {% if messages %}
+                                <div class="alert alert-success mb-3">
+                                    {% for message in messages %}
+                                    {{ message }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                {% endwith %}
+
+                                <form method="post" action="{{ url_for('login') }}">
+                                    <div class="mb-4">
+                                        <label for="username" class="form-label">Username</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="password" class="form-label">Password</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                                        </div>
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary btn-lg">Login</button>
+                                    </div>
+                                </form>
+
+                                <div class="text-center mt-4">
+                                    <p class="text-muted">Default credentials: admin / admin123</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

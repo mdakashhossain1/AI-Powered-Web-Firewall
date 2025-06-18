@@ -1,0 +1,26 @@
+run the project-------
+python app/main.py
+
+Train the model-------
+python train_model.py
+
+Lib---
+pip install scikit-learn pandas flask joblib
+
+Direct Download using txt--
+pip download -r requirements.txt -d packages
+
+
+Dataset used ----
+Download the NSL-KDD dataset:
+
+Go to: NSL-KDD Dataset https://www.kaggle.com/datasets/hassan06/nslkdd
+
+Download KDDTrain+.txt
+
+Rename it to nsl_kdd.csv and place it inside the dataset/ folder.
+
+
+
+Run the hacker panel
+cd hacker_portal; python app.py

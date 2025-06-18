@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethical Hacking Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-dark text-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-shield-alt me-2"></i>Ethical Hacking Portal
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><i class="fas fa-home me-1"></i>Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#attack-types"><i class="fas fa-bug me-1"></i>Attack Types</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#dataset-info"><i class="fas fa-database me-1"></i>Dataset Info</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card bg-black text-light mb-4">
+                    <div class="card-header bg-danger text-white">
+                        <h4><i class="fas fa-exclamation-triangle me-2"></i>Ethical Hacking Test Portal</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="lead">This portal allows you to test website security by simulating various attack patterns from the NSL-KDD dataset.</p>
+                        <p><strong>Important:</strong> Only use this tool on websites you own or have explicit permission to test. Unauthorized testing is illegal.</p>
+                        
+                        <form id="attack-form" class="mt-4">
+                            <div class="mb-3">
+                                <label for="target-url" class="form-label">Target Website URL</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                                    <input type="url" class="form-control" id="target-url" placeholder="https://example.com" required>
+                                </div>
+                                <div class="form-text text-light-50">Enter the full URL of the website you want to test.</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="attack-type" class="form-label">Attack Type</label>
+                                <select class="form-select" id="attack-type" required>
+                                    <option value="" selected disabled>Select an attack type</option>
+                                    {% for attack in attack_types %}
+                                    <option value="{{ attack }}">{{ attack }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="attack-intensity" class="form-label">Attack Intensity</label>
+                                <input type="range" class="form-range" id="attack-intensity" min="1" max="10" value="3">
+                                <div class="d-flex justify-content-between">
+                                    <span>Low</span>
+                                    <span>Medium</span>
+                                    <span>High</span>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-danger" id="start-attack-btn">
+                                    <i class="fas fa-play me-2"></i>Start Simulation
+                                </button>
+                                <button type="button" class="btn btn-secondary d-none" id="stop-attack-btn">
+                                    <i class="fas fa-stop me-2"></i>Stop Simulation
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="card bg-black text-light mb-4 d-none" id="attack-details-card">
+                    <div class="card-header bg-info text-white">
+                        <h5><i class="fas fa-info-circle me-2"></i>Attack Details</h5>
+                    </div>
+                    <div class="card-body" id="attack-details-content">
+                        <!-- Attack details will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card bg-black text-light mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="fas fa-chart-line me-2"></i>Real-time Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="status-container" class="d-none">
+                            <div class="mb-3">
+                                <h6>Simulation Status</h6>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" id="status-progress" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <p class="mt-2 mb-0" id="status-text">Waiting to start...</p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <h6>Statistics</h6>
+                                <ul class="list-group list-group-flush bg-transparent">
+                                    <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between">
+                                        <span>Requests Sent:</span>
+                                        <span id="requests-sent">0</span>
+                                    </li>
+                                    <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between">
+                                        <span>Requests Blocked:</span>
+                                        <span id="requests-blocked">0</span>
+                                    </li>
+                                    <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between">
+                                        <span>Block Rate:</span>
+                                        <span id="block-rate">0%</span>
+                                    </li>
+                                    <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between">
+                                        <span>Duration:</span>
+                                        <span id="duration">00:00</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div id="status-placeholder">
+                            <p class="text-center text-muted my-5">
+                                <i class="fas fa-hourglass fa-3x mb-3"></i><br>
+                                Start a simulation to see real-time status
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bg-black text-light mb-4 d-none" id="recent-logs-card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5><i class="fas fa-list me-2"></i>Recent Logs</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush" id="recent-logs">
+                            <!-- Logs will be added here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4" id="attack-types">
+            <div class="col-12">
+                <div class="card bg-black text-light">
+                    <div class="card-header bg-warning text-dark">
+                        <h4><i class="fas fa-bug me-2"></i>Available Attack Types</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" id="attack-types-container">
+                            <!-- Attack types will be loaded here -->
+                            <p class="text-center">Loading attack types...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4" id="dataset-info">
+            <div class="col-12">
+                <div class="card bg-black text-light">
+                    <div class="card-header bg-info text-white">
+                        <h4><i class="fas fa-database me-2"></i>NSL-KDD Dataset Information</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>The NSL-KDD dataset is a refined version of the KDD Cup '99 dataset, specifically designed for network intrusion detection systems. It contains various network traffic samples labeled as either normal or attack traffic.</p>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <h5>Dataset Statistics</h5>
+                                <div id="dataset-stats-container">
+                                    <p>Loading dataset statistics...</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Attack Distribution</h5>
+                                <canvas id="attack-distribution-chart" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="bg-black text-light mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Ethical Hacking Portal</h5>
+                    <p>A tool for testing website security against various attack patterns.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p><strong>Disclaimer:</strong> Use this tool responsibly and legally.</p>
+                    <p class="mb-0">&copy; 2023 AI Firewall Project</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/attack.js') }}"></script>
+</body>
+</html>

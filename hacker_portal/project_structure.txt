@@ -1,0 +1,21 @@
+hacker_portal/
+├── app.py                  # Main Flask application
+├── templates/
+│   ├── index.html          # Main portal interface
+│   ├── results.html        # Real-time results display
+│   └── blocked.html        # Page shown when traffic is blocked
+├── static/
+│   ├── css/
+│   │   └── style.css       # Custom styles
+│   ├── js/
+│   │   ├── main.js         # Main JavaScript functionality
+│   │   └── attack.js       # Attack simulation logic
+│   └── images/             # Image assets
+├── utils/
+│   ├── attack_simulator.py # Traffic simulation logic
+│   ├── data_processor.py   # Dataset processing utilities
+│   └── feature_extractor.py # Feature extraction from requests
+├── models/
+│   └── firewall_model.pkl  # Trained ML model
+└── dataset/
+    └── nsl_kdd.csv         # NSL-KDD dataset
