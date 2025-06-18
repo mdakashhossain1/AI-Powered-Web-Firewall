@@ -128,6 +128,22 @@ The screenshots demonstrate several key aspects of the AI Firewall system:
 
 These visual elements work together to create an intuitive yet powerful security solution that can be easily managed by administrators while providing a seamless experience for legitimate users.
 
+### Project Developer
+
+![Developer](image/mypassport.png)
+
+**Akash Hossain** - *Lead Developer & AI Security Specialist*
+
+The AI-Powered Web Firewall project was developed by Akash Hossain, combining expertise in cybersecurity, machine learning, and full-stack development to create a comprehensive security solution that addresses modern web threats through innovative AI-powered approaches.
+
+**Specializations:**
+- AI-driven threat detection systems
+- Machine learning model optimization for real-time security applications
+- Full-stack web development and system integration
+- Cybersecurity frameworks and deployment architecture
+
+**Website:** [arknox.in](https://arknox.in)
+
 ## System Architecture
 
 The AI Firewall system consists of several key components that work together to provide robust protection against web-based attacks:
@@ -496,7 +512,7 @@ ai_firewall/
 │   │   ├── Screenshot (824).png  # Traffic analysis
 │   │   ├── Screenshot (825).png  # Threat intelligence
 │   │   └── Screenshot (826).png  # Security logs
-
+│   └── mypassport.png       # Developer photo
 ├── hacker_portal/           # Attack simulation environment
 ├── dataset/                 # Training datasets
 ├── model/                   # ML model files
@@ -510,11 +526,13 @@ The project includes comprehensive visual documentation through organized image 
 **Screenshot Organization**:
 - **AI Web Interface**: 8 screenshots showing the complete user journey from initial access through verification
 - **Hacker Portal**: 7 screenshots demonstrating attack simulation and detection capabilities
+- **Developer Photo**: Professional photo of the project developer
 
 **Image Usage Guidelines**:
 - All screenshots are in PNG format for optimal quality and transparency support
 - Images are organized in descriptive folders for easy maintenance
 - File naming follows a sequential pattern for chronological user flow documentation
+- Developer photo is in PNG format optimized for web display
 
 **Visual Documentation Benefits**:
 - Provides immediate understanding of system capabilities
@@ -685,6 +703,11 @@ The documentation includes comprehensive visual materials located in the `image/
 2. Screenshots are numbered sequentially (820-826) showing attack simulation capabilities
 3. Images demonstrate the system's response to various attack scenarios
 
+**Developer Photo:**
+- Located directly in the `image/` folder as `mypassport.png`
+- Professional photo of the project developer
+- Used for project attribution and developer recognition
+
 ### Image Integration
 
 The images are integrated into this documentation using relative paths, making them accessible when viewing the documentation in any markdown-compatible viewer that supports local file references. For web deployment, ensure the image paths are properly configured for your hosting environment.
@@ -693,7 +716,7 @@ The images are integrated into this documentation using relative paths, making t
 
 The AI-Powered Web Firewall represents a significant advancement in web application security by leveraging machine learning to detect and block malicious traffic in real-time. By analyzing 41 different features extracted from each web request, the system can identify complex attack patterns that traditional rule-based firewalls might miss.
 
-The comprehensive visual documentation, including detailed interface screenshots, provides stakeholders with a clear understanding of the technical capabilities and functionality of this innovative security solution.
+The comprehensive visual documentation, including interface screenshots and developer profile, provides stakeholders with a clear understanding of both the technical capabilities and the expertise behind this innovative security solution.
 
 The Random Forest classifier, trained on the NSL-KDD dataset, provides high accuracy in distinguishing between legitimate users and potential threats. The confidence threshold approach minimizes false positives while maintaining robust protection against clearly malicious traffic.
 
@@ -718,173 +741,3 @@ For questions, contributions, or collaboration opportunities, please visit [arkn
 ---
 
 *This documentation and the associated AI-Powered Web Firewall system are provided under the MIT License. See the license section above for full terms and conditions.*
-
-## Feature Extraction
-
-The system extracts 41 different features from each web request, following the feature categories defined in the NSL-KDD dataset:
-
-### Basic Features (1-9)
-These features are derived from packet headers without inspecting the payload:
-- Duration of connection
-- Protocol type (TCP, UDP, ICMP)
-- Service (http, ftp, smtp, etc.)
-- Flag (connection status)
-- Source and destination bytes
-- Land indicator (if source and destination are the same)
-- Wrong fragment
-- Urgent packets
-
-### Content Features (10-22)
-These features examine the payload of the original TCP packets:
-- Hot indicators
-- Number of failed logins
-- Logged in indicator
-- Number of compromised conditions
-- Root shell indicator
-- Su attempted indicator
-- Number of root accesses
-- Number of file creation operations
-- Number of shell prompts
-- Number of operations on access control files
-- Number of outbound commands in an FTP session
-- Is hot login indicator
-- Is guest login indicator
-
-### Time-based Traffic Features (23-31)
-These features examine connections in the past 2 seconds that have the same destination host:
-- Number of connections to the same host
-- Percentage of connections to the same service
-- Percentage of different services
-- Percentage of SYN packets
-- Percentage of different services from the same source port
-- Percentage of REJ packets
-- Percentage of connections with SYN errors
-- Percentage of connections with REJ errors
-- Percentage of connections with the same service
-
-### Host-based Traffic Features (32-41)
-These features examine connections in the past 100 connections that have the same destination host:
-- Number of connections to the same host
-- Percentage of connections to the same service
-- Percentage of different services
-- Number of connections with SYN errors
-- Number of connections with REJ errors
-- Number of connections with the same service
-- Percentage of connections to the same port
-- Percentage of connections with different services
-- Percentage of connections with SYN errors
-- Percentage of connections with REJ errors
-- Percentage of connections with the same service
-
-In the current implementation, a simplified feature extraction process is used, which will be enhanced in future versions to capture all 41 features more comprehensively.
-
-## Decision Making Process
-
-The decision-making process in the AI Firewall follows these steps:
-
-1. **Feature Vector Creation**: The extracted features are assembled into a feature vector that matches the format expected by the machine learning model.
-
-2. **Prediction**: The feature vector is passed to the Random Forest classifier, which returns:
-   - A binary prediction (0 for normal, 1 for attack)
-   - Probability scores for each class
-
-3. **Confidence Threshold**: The system uses a confidence threshold to determine the action:
-   ```python
-   if prediction[0] == 1 and prediction_prob[1] > 0.8:
-       return redirect(url_for('blocked_page'))
-   else:
-       return redirect(url_for('home_page'))
-   ```
-   This means that traffic is only blocked if:
-   - It is classified as an attack (prediction[0] == 1)
-   - The confidence level is high (>80%)
-
-4. **Response Selection**: Based on the decision:
-   - If blocked: User is redirected to a blocked page
-   - If allowed: User proceeds to the home page
-
-This approach minimizes false positives by requiring high confidence before blocking legitimate users, while still providing protection against clearly malicious traffic.
-
-## IP Blocking Mechanism
-
-The AI Firewall implements several techniques for IP-based threat detection and blocking:
-
-### 1. Feature-Based IP Analysis
-
-The system analyzes IP-related features including:
-- Source IP address patterns
-- Geographic location of IP addresses
-- Historical behavior of IP addresses
-- Connection frequency from the same IP
-
-### 2. Temporary vs. Permanent Blocking
-
-The system supports two types of IP blocking:
-
-**Temporary Blocking**:
-- Applied when suspicious activity is detected but not definitively malicious
-- Typically lasts for a short period (e.g., 15-30 minutes)
-- Allows legitimate users to retry after a cooling-off period
-
-**Permanent Blocking**:
-- Applied when malicious activity is confirmed with high confidence
-- Requires manual review for removal
-- Used for persistent attackers and known malicious IPs
-
-### 3. IP Reputation Integration
-
-The system can be configured to integrate with external IP reputation databases to enhance blocking decisions:
-- Known malicious IP lists
-- Tor exit nodes
-- VPN/proxy detection services
-- Geographic IP blocking for regions with high attack rates
-
-### 4. Implementation Details
-
-The IP blocking is implemented at the application level rather than at the network level. When a request is blocked, the system:
-
-1. Logs the incident with detailed information
-2. Adds the IP to an internal blocklist with a timestamp
-3. Returns a 403 Forbidden response or redirects to a blocked page
-4. Optionally notifies administrators of high-severity blocks
-
-## User Verification System
-
-For requests that appear suspicious but don't meet the threshold for immediate blocking, the system implements a user verification process:
-
-### 1. Progressive Challenge System
-
-The verification system employs a progressive challenge approach:
-- Initial verification is lightweight and minimally intrusive
-- If suspicion remains, more rigorous verification is applied
-- The process balances security with user experience
-
-### 2. Verification Methods
-
-The system includes multiple verification techniques:
-
-**Browser Fingerprinting**:
-- Analyzes browser characteristics to identify automation tools
-- Checks for inconsistencies in reported browser properties
-- Detects headless browsers commonly used in attacks
-
-**Behavioral Analysis**:
-- Monitors mouse movements and keyboard patterns
-- Analyzes page interaction timing
-- Identifies non-human behavior patterns
-
-**Challenge-Response Tests**:
-- Implements invisible CAPTCHA-like challenges
-- Uses JavaScript-based puzzles that are difficult for bots to solve
-- Progressively increases difficulty based on suspicion level
-
-### 3. Implementation
-
-The verification process is implemented using:
-- Client-side JavaScript for behavioral analysis
-- Server-side session tracking
-- Progress indicators to keep users informed
-- Graceful degradation for users with JavaScript disabled
-
-The verification page (`checking.html`) simulates this process with a progress bar and status messages, creating a user-friendly experience while performing security checks.
-"# AI-Powered-Web-Firewall" 
